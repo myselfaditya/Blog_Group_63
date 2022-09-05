@@ -1,0 +1,19 @@
+{
+  "name": "blog_group_63",
+  "version": "1.0.0",
+  "description": "Repository for backend cohort - Plutonium",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/myselfaditya/Blog_Group_63.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/myselfaditya/Blog_Group_63/issues"
+  },
+  "homepage": "https://github.com/myselfaditya/Blog_Group_63#readme"
+}
