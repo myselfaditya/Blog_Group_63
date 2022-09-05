@@ -1,6 +1,13 @@
 const mongoose = require ('mongoose')
 const authorSchema = new mongoose.Schema(
     {
-        f
+        fname: {
+            type: String,
+            required: true
+        },
+        lname: {
+            type: String,
+            required: true
+        },
     }
 )
