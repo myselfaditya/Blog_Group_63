@@ -1,4 +1,4 @@
-const mongoose = require ('mongoose')
+const mongoose = require('mongoose')
 const authorSchema = new mongoose.Schema(
     {
         fname: {
@@ -9,5 +9,29 @@ const authorSchema = new mongoose.Schema(
             type: String,
             required: true
         },
+        title: {
+            type: String,
+            enum: ["Mr", "Miss", "Mrs"],
+            required: true
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            validate: {
+                validator: function (v) {
+                    return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
+                },
+                message: "Please enter a valid email"
+            }
+        },
+        password: {
+            type: String,
+            required: true
+        }
+
+
     }
+
 )
+module.exports=mongoose.model('Author',authorSchema)
