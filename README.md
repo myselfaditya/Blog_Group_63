@@ -1,5 +1,8 @@
 # Blog_Group_63
 https://github.com/myselfaditya/Blog_Group_63.git
+
+
+
 # Plutonium
 
 Repository for backend cohort - Plutonium
@@ -41,6 +44,7 @@ Repository for backend cohort - Plutonium
   - List of blogs that have a specific tag
   - List of blogs that have a specific subcategory
 example of a query url: blogs?filtername=filtervalue&f2=fv2
+
 
 ### PUT /blogs/:blogId
 - Updates a blog by changing the its title, body, adding tags, adding a subcategory. (Assuming tag and subcategory received in body is need to be added)
