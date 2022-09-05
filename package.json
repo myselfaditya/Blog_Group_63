@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/myselfaditya/Blog_Group_63/issues"
   },
-  "homepage": "https://github.com/myselfaditya/Blog_Group_63#readme"
+  "homepage": "https://github.com/myselfaditya/Blog_Group_63#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
 }
