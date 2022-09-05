@@ -12,7 +12,7 @@ const blogScehma = new mongoose.Schema({
     },
     authorId: {
         tyep: objectid,
-        ref: authorSchemagit ,
+        ref: authorSchema ,
         required: true
     },
     tags: ["String"],
