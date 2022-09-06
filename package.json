@@ -4,7 +4,8 @@
   "description": "Repository for backend cohort - Plutonium",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon src/index.js"
+    "test": "nodemon src/index.js",
+    "start": "npx nodemon src/index.js"
   },
   "repository": {
     "type": "git",

@@ -45,18 +45,18 @@ const getBlog = async function (req, res) {
         let category = req.query.category
         let tags = req.query.tags
         let subcategory = req.query.subcategory
-        
+
         // //Filter blogs list by applying filters
         if (authorId) { obj.authorId = authorId }//
-        if(category) { obj.category = category }
-        if(tags) { obj.tags = tags }
-        if(subcategory){ obj.subcategory = subcategory}//
+        if (category) { obj.category = category }
+        if (tags) { obj.tags = tags }
+        if (subcategory) { obj.subcategory = subcategory }//
 
         let saveData = await blogModel.find(obj)
         if (saveData.length == 0) {
-            return res.status(404).send({status: false , msg : "No document found with this filter"})
+            return res.status(404).send({ status: false, msg: "No document found with this filter" })
         }
-        return res.status(200).send({status:true , data : saveData})
+        return res.status(200).send({ status: true, data: saveData })
     }
     catch (err) {
         return res.status(500).send({ status: false, msg: err.message })
@@ -73,7 +73,7 @@ const getBlog = async function (req, res) {
 // - Also make sure in the response you return the updated blog document. 
 
 
-const updateBlog = async function (req,res){
+const updateBlog = async function (req, res) {
 
 }
 
@@ -84,7 +84,18 @@ const updateBlog = async function (req,res){
 // - If the blog document doesn't exist then return an HTTP status of 404 with a body like [this](#error-response-structure) 
 
 
-const deleteBlogByPath = async function (req,res){
+const deleteBlogByPath = async function (req, res) {
+    try {
+        let blogId = req.params.blogId
+        if (!await blogModel.findById(blogId)) {
+            return res.status(404).send({ status: false, msg: "Invalid blog id " })
+        }
+        let record = await blogModel.findOneAndUpdate({ _id: blogId, isDeleted: false }, { isDeleted: true }, { new: true })
+        res.status(200).send()
+    }
+    catch (err) {
+        res.status(500).send({ status: false, msg: err.message })
+    }
 
 }
 
@@ -95,7 +106,7 @@ const deleteBlogByPath = async function (req,res){
 // - If the blog document doesn't exist then return an HTTP status of 404 with a body like [this](#error-response-structure)
 
 
-const deleteBlogByQuery = async function (req , res){
+const deleteBlogByQuery = async function (req, res) {
 
 }
 

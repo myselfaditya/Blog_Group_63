@@ -147,4 +147,4 @@ Refer below sample
 #### Note: Create a group database and use the same database in connection string by replacing `groupXDatabase
 
 
-
+what if we do not give path param in our rout
