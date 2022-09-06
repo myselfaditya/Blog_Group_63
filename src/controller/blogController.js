@@ -75,46 +75,45 @@ const getBlog = async function (req, res) {
 
 const updateBlog = async function (req, res) {
     try {
-      let data = req.body
-      let id = req.params.blogId
-  
-      if (Object.keys(data).length == 0)
-      {return res.status(400).send({ status: false, msg: "please enter blog details for updating" })}
-  
-      if (!id) {return res.status(400).send({ status: false, msg: "blogid is required" })}
-  
-      let findBlog = await blogModel.findById(id)
-      if (!findBlog) {return res.status(404).send({ status: false, msg: "Invalid BlogId" })}
-  
-      if (findBlog.isDeleted == true) {return res.status(404).send({status: false, msg: "blogs already deleted" })}
+        let data = req.body
+        let id = req.params.blogId
 
-      let obj = {}
-      let obj2 = {}
+        if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, msg: "please enter blog details for updating" }) }
 
-       let title = req.body.title
-       let body = req.body.body
-       let category = req.body.category
-       let tags = req.body.tags
-       let subcategory = req.body.subcategory
+        if (!id) { return res.status(400).send({ status: false, msg: "blogid is required" }) }
 
-      if (title) { obj.title = title }
-      if (body) { obj.body = body }
-      if (category) { obj.category = category }
-      if (tags) { obj2.tags = tags }
-      if (subcategory) { obj2.subcategory = subcategory }
-      obj.publishedAt= new Date(),
-      obj.isPublished= true
-  
-      let updatedBlog = await blogModel.findOneAndUpdate({ _id: id }, {
-        $set: obj,
-        $push: obj2
-      }, { new: true, upsert: true })
-      return res.status(200).send({status: true, data: updatedBlog})
+        let findBlog = await blogModel.findById(id)
+        if (!findBlog) { return res.status(404).send({ status: false, msg: "Invalid BlogId" }) }
+
+        if (findBlog.isDeleted == true) { return res.status(404).send({ status: false, msg: "blogs already deleted" }) }
+
+        let obj = {}
+        let obj2 = {}
+
+        let title = req.body.title
+        let body = req.body.body
+        let category = req.body.category
+        let tags = req.body.tags
+        let subcategory = req.body.subcategory
+
+        if (title) { obj.title = title }
+        if (body) { obj.body = body }
+        if (category) { obj.category = category }
+        if (tags) { obj2.tags = tags }
+        if (subcategory) { obj2.subcategory = subcategory }
+        obj.publishedAt = new Date(),
+            obj.isPublished = true
+
+        let updatedBlog = await blogModel.findOneAndUpdate({ _id: id }, {
+            $set: obj,
+            $push: obj2
+        }, { new: true, upsert: true })
+        return res.status(200).send({ status: true, data: updatedBlog })
     }
     catch (err) {
-      res.status(500).send({ status: false, msg: err.message })
+        res.status(500).send({ status: false, msg: err.message })
     }
-  };
+};
 
 
 // ### DELETE /blogs/:blogId
@@ -145,7 +144,29 @@ const deleteBlogByPath = async function (req, res) {
 
 
 const deleteBlogByQuery = async function (req, res) {
+    try {
+        let category = req.query.category
+        let authorid = req.query.authorId
+        let tag = req.query.tag
+        let subcategory = req.query.subcategory
+        if (!await authorModel.findById(authorid)) {
+            return res.status(400).send({ status: false, msg: "Author id is not valid" })
+        }
+        let obj = {}
+        if (category) { obj.category = category }
+        if (category) { obj.authorId = authorid }
+        if (category) { obj.tag = tag }
+        if (category) { obj.subcategory = subcategory }
+        if (category) { obj.isPublished = isPublished }
+        if (Object.keys(obj).length == 0) { return res.status(400).send({ status: false, msg: "No document is enter in filter" }) }
+        let deletedocument = await blogModel.findOneAndUpdate({ obj }, { isDeleted: true, deletedAt: Date.now() }, { new: true })
+        res.status(200).send()
 
+
+    }
+    catch (err) {
+        res.status(500).status({ status: false, msg: err.message })
+    }
 }
 
 
