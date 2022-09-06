@@ -159,7 +159,7 @@ const deleteBlogByQuery = async function (req, res) {
         if (subcategory) { obj.subcategory = subcategory }
         /*if (isPublished) { obj.isPublished = isPublished }*/
         if (Object.keys(obj).length == 0) { return res.status(400).send({ status: false, msg: "No document is enter in filter" }) }
-        let deletedocument = await blogModel.findOneAndUpdate({ obj }, { isDeleted: true, deletedAt: Date.now() }, { new: true })
+        let deletedocument = await blogModel.findOneAndUpdate( obj , { isDeleted: true, deletedAt: Date.now() }, { new: true })
         res.status(200).send()
 
 
