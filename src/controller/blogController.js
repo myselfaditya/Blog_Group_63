@@ -127,7 +127,7 @@ const deleteBlogByPath = async function (req, res) {
         if (!await blogModel.findById(blogId)) {
             return res.status(404).send({ status: false, msg: "Invalid blog id " })
         }
-        let record = await blogModel.findOneAndUpdate({ _id: blogId, isDeleted: false }, { isDeleted: true }, { new: true })
+        let record = await blogModel.findOneAndUpdate({ _id: blogId, isDeleted: false }, { isDeleted: true ,deletedAt: Date.now()},  { new: true })
         res.status(200).send()
     }
     catch (err) {
