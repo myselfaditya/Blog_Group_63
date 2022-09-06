@@ -146,18 +146,18 @@ const deleteBlogByPath = async function (req, res) {
 const deleteBlogByQuery = async function (req, res) {
     try {
         let category = req.query.category
-        let authorid = req.query.authorId
+        let authorId = req.query.authorId
         let tag = req.query.tag
         let subcategory = req.query.subcategory
-        if (!await authorModel.findById(authorid)) {
+        if (!await authorModel.findById(authorId)) {
             return res.status(400).send({ status: false, msg: "Author id is not valid" })
         }
         let obj = {}
         if (category) { obj.category = category }
-        if (category) { obj.authorId = authorid }
-        if (category) { obj.tag = tag }
-        if (category) { obj.subcategory = subcategory }
-        if (category) { obj.isPublished = isPublished }
+        if (authorId) { obj.authorId = authorId }
+        if (tag) { obj.tag = tag }
+        if (subcategory) { obj.subcategory = subcategory }
+        /*if (isPublished) { obj.isPublished = isPublished }*/
         if (Object.keys(obj).length == 0) { return res.status(400).send({ status: false, msg: "No document is enter in filter" }) }
         let deletedocument = await blogModel.findOneAndUpdate({ obj }, { isDeleted: true, deletedAt: Date.now() }, { new: true })
         res.status(200).send()
