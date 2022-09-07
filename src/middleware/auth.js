@@ -1,0 +1,61 @@
+
+const jwt = require("jsonwebtoken");
+const authorModel = require("../model/authorModel");
+const blogModel = require("../model/blogModel");
+
+// /### Authentication
+// - Add an authorisation implementation for the JWT token that validates the token before every protected endpoint is called. If the validation fails, return a suitable error message with a corresponding HTTP status code
+// - Protected routes are create a blog, edit a blog, get the list of blogs, delete a blog(s)
+// - Set the token, once validated, in the request - `x-api-key`
+// - Use a middleware for authentication purpose.
+//Authentication
+const authentication = async function (req, res, next) {
+    try{
+        let token = req.headers["x-auth-token"]
+    //If no token is present in the request header return error. This means the user is not logged in.
+    if (!token)
+        return res.status(400).send({ status: false, msg: "token must be present" });
+
+    let decodedToken = jwt.verify(token, "FunctionUp Group No 63")
+    if (!decodedToken) return res.status(400).send({ status: false, message: "invalid token" });
+
+    req.authorId = decodedToken.authorId
+    console.log(req.authorId)  //Set an attribute in request object 
+    next();
+    }
+    catch(err){
+        res.status(500).send({status:false,msg:err.message})
+    }
+};
+
+// Make sure that only the owner of the blogs is able to edit or delete the blog.
+// - In case of unauthorized access return an appropirate error message.
+
+const authorization=async function(req,res,next){
+    try{
+        // let requestauthorIdparam=req.params.authorId
+        // 
+        if(req.params.blogId){
+        let blogId=req.params.blogId
+        let authorId=await blogModel.findById(blogId)
+        console.log(authorId.authorId)
+        if(authorId !==req.authorId){
+            return res.status(403).send({status:false,msg:"You are not authorized"})
+        }
+        }
+        else{
+        let requestauthorIdquery=req.query.authorId
+        if(requestauthorIdquery!==req.authorId){
+            return res.status(403).send({status:false,msg:"You are not authorized"})
+        }
+        }
+    next()
+    }
+    catch(err){
+        res.status(500).send({status:false,msg:err.message})
+    }
+}
+
+module.exports.authentication = authentication
+module.exports.authorization=authorization
+

@@ -1,4 +1,5 @@
 const authorModel = require("../model/authorModel")
+const jwt=require("jsonwebtoken")
 // const validateEmail = require("email-validator")
 
 
@@ -16,6 +17,9 @@ const createAuthor = async function (req, res) {
         if( Object.keys(data).length == 0 ) {
             return res.status(400).send({ status: false, message: "data is missing in body"})
         }
+        if( Object.keys(data).length > 5 ) {
+            return res.status(400).send({ status: false, message: "data is exceeding"})
+        }
         if(!data.fname){return res.status(400).send({status:false,msg:"fname name is required"})}
         if(!data.lname){return res.status(400).send({status:false,msg:"lname name is required"})}
         if(!data.title){return res.status(400).send({status:false,msg:"title name is required"})}
@@ -29,7 +33,6 @@ const createAuthor = async function (req, res) {
         if (!validEmail.test(email)) {
             return res.status(400).send({ status: false, message: "please enter email in  correct format" })
         }
-    
         let authorCreated = await authorModel.create(data)
         res.status(201).send({ status : true , data: authorCreated })
     }
@@ -44,22 +47,35 @@ module.exports.createAuthor = createAuthor
 
 const login = async function (req, res) {
     try{
-        let userName = req.body.emailId;
+        let email = req.body.email;
         let password = req.body.password;
-        let user = await authorModel.findOne({ emailId: userName, password: password });
-        if (!user)
+        let data = req.body
+        if( Object.keys(data).length == 0 ) {
+            return res.status(400).send({ status: false, message: "data is missing in body"})
+        }
+        if( Object.keys(data).length > 2 ) {
+            return res.status(400).send({ status: false, message: "data is exceeding"})
+        }
+        if(!email){return res.status(400).send({status:false,msg:"email is required"})}
+        if(!password){return res.status(400).send({status:false,msg:"password is required"})}
+        let validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+        if (!validEmail.test(email)) {
+            return res.status(400).send({ status: false, message: "please enter email in  correct format" })
+        }
+        let author = await authorModel.findOne({ email:email, password:password });
+        if (!author)
           return res.status(404).send({
             status: false,
-            msg: "username or the password is not corerct",
+            msg: "email or the password is not corerct",
           });
     
         let token = jwt.sign(
           {
-            userId: user._id,
+            authorId: author._id,
             batch: "plutonium",
             organisation: "FunctionUp",
           },
-          "functionup-plutonium-very-very-secret-key"
+          "FunctionUp Group No 63"
         );
         res.setHeader("x-auth-token", token);
         res.status(201).send({ status: true, token: token });

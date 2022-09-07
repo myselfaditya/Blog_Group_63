@@ -12,7 +12,7 @@ const blogModel = require("../model/blogModel")
 const createBlog = async function (req, res) {
     try {
         let data = req.body
-        let bodyauthorid = req.body.authorId
+        let authorId = req.body.authorId
         if (!data.title) { return res.status(400).send({ status: false, msg: "title name is required" }) }
         if (!data.body) { return res.status(400).send({ status: false, msg: "body name is required" }) }
         if (!data.authorId) { return res.status(400).send({ status: false, msg: "authorId name is required" }) }
