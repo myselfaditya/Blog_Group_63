@@ -35,3 +35,35 @@ const createAuthor = async function (req, res) {
 }
 
 module.exports.createAuthor = createAuthor
+
+
+const login = async function (req, res) {
+    try{
+        let userName = req.body.emailId;
+        let password = req.body.password;
+        let user = await authorModel.findOne({ emailId: userName, password: password });
+        if (!user)
+          return res.status(404).send({
+            status: false,
+            msg: "username or the password is not corerct",
+          });
+    
+        let token = jwt.sign(
+          {
+            userId: user._id,
+            batch: "plutonium",
+            organisation: "FunctionUp",
+          },
+          "functionup-plutonium-very-very-secret-key"
+        );
+        res.setHeader("x-auth-token", token);
+        res.status(201).send({ status: true, token: token });
+    }
+    catch(err){
+        console.log("This is the error :", err.message)
+        res.status(500).send({ status: false, msg: "Error", error: err.message })
+    }
+}
+
+
+module.exports.login = login
