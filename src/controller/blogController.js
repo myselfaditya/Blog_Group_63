@@ -13,8 +13,17 @@ const createBlog = async function (req, res) {
     try {
         let data = req.body
         let bodyauthorid = req.body.authorId
-        if (!await authorModel.findById(bodyauthorid)) {
-            return res.status(400).send({ status: false, msg: "Invalid author id" })
+        if (!data.title) { return res.status(400).send({ status: false, msg: "title name is required" }) }
+        if (!data.body) { return res.status(400).send({ status: false, msg: "body name is required" }) }
+        if (!data.authorId) { return res.status(400).send({ status: false, msg: "authorId name is required" }) }
+        if (!data.category) { return res.status(400).send({ status: false, msg: "category name is required" }) }
+        if (authorId) {
+            if (authorId.length != 24) { return res.status(400).send({ status: false, msg: "authorId is not in format" }) }
+            else {
+                if (!await authorModel.findById(authorId)) {
+                    return res.status(400).send({ status: false, msg: "Author id is not valid" })
+                }
+            }
         }
         let record = await blogModel.create(data)
         res.status(201).send({ status: true, data: record })
@@ -45,7 +54,14 @@ const getBlog = async function (req, res) {
         let category = req.query.category
         let tags = req.query.tags
         let subcategory = req.query.subcategory
-
+        if (authorId) {
+            if (authorId.length != 24) { return res.status(400).send({ status: false, msg: "authorId is not in format" }) }
+            else {
+                if (!await authorModel.findById(authorId)) {
+                    return res.status(400).send({ status: false, msg: "Author id is not valid" })
+                }
+            }
+        }
         // //Filter blogs list by applying filters
         if (authorId) { obj.authorId = authorId }//
         if (category) { obj.category = category }
@@ -81,7 +97,7 @@ const updateBlog = async function (req, res) {
 
         if (!id) { return res.status(400).send({ status: false, msg: "blogid is required" }) }
 
-        if(id.length != 24){ return res.status(400).send({ status: false, msg: "blogId is not in format" })}
+        if (id.length != 24) { return res.status(400).send({ status: false, msg: "blogId is not in format" }) }
 
         let findBlog = await blogModel.findById(id)
         if (!findBlog) { return res.status(404).send({ status: false, msg: "Invalid BlogId" }) }
@@ -129,17 +145,17 @@ const deleteBlogByPath = async function (req, res) {
     try {
         let blogId = req.params.blogId
 
-        if(blogId.length != 24){ return res.status(400).send({ status: false, msg: "blogId is not in format" })}
+        if (blogId.length != 24) { return res.status(400).send({ status: false, msg: "blogId is not in format" }) }
 
         let blogVerify = await blogModel.findById(blogId)
         if (!blogVerify) {
             return res.status(404).send({ status: false, msg: "Invalid blog id" })
         }
-        if(blogVerify.isDeleted){ 
-            return res.status(404).send({status : false , msg: "already deleted"})
+        if (blogVerify.isDeleted) {
+            return res.status(404).send({ status: false, msg: "already deleted" })
         }
 
-        let record = await blogModel.findOneAndUpdate({ _id: blogId, isDeleted: false }, { isDeleted: true ,deletedAt: Date.now()},  { new: true })
+        let record = await blogModel.findOneAndUpdate({ _id: blogId, isDeleted: false }, { isDeleted: true, deletedAt: Date.now() }, { new: true })
         res.status(200).send()
     }
     catch (err) {
@@ -155,34 +171,37 @@ const deleteBlogByPath = async function (req, res) {
 
 
 const deleteBlogByQuery = async function (req, res) {
-  try {
-    
-    let authorId = req.query.authorId
-    if(authorId){
-        if(authorId.length != 24){ return res.status(400).send({ status: false, msg: "authorId is not in format" })}
+    try {
+
+        let authorId = req.query.authorId
+        if (authorId) {
+            if (authorId.length != 24) { return res.status(400).send({ status: false, msg: "authorId is not in format" }) }
+            else {
+                if (!await authorModel.findById(authorId)) {
+                    return res.status(400).send({ status: false, msg: "Author id is not valid" })
+                }
+            }
+        }
+        let category = req.query.category
+        let tag = req.query.tag
+        let subcategory = req.query.subcategory
+        let isPublished = req.query.isPublished
+
+        let obj = {}
+        if (category) { obj.category = category }
+        if (authorId) { obj.authorId = authorId }
+        if (tag) { obj.tag = tag }
+        if (subcategory) { obj.subcategory = subcategory }
+        let deleted = await blogModel.findOne({ obj }).select({ isDeleted: 1, _id: 0 })
+        console.log(deleted)
+        if (deleted.isDeleted) { return res.status(404).send({ status: false, msg: "Document already deleted" }) }
+        if (Object.keys(obj).length == 0) { return res.status(400).send({ status: false, msg: "No document is enter in filter" }) }
+        let deletedocument = await blogModel.findOneAndUpdate(obj, { isDeleted: true, deletedAt: Date.now() }, { new: true })
+        res.status(200).send(deletedocument)
     }
-    
-    
-    if (!await authorModel.findById(authorId)) {
-        return res.status(400).send({ status: false, msg: "Author id is not valid" })
+    catch (err) {
+        res.status(500).status({ status: false, msg: err.message })
     }
-    let category = req.query.category
-    let tag = req.query.tag
-    let subcategory = req.query.subcategory
-    let isPublished = req.query.isPublished
-    
-    let obj = {}
-    if (category) { obj.category = category }
-    if (authorId) { obj.authorId = authorId }
-    if (tag) { obj.tag = tag }
-    if (subcategory) { obj.subcategory = subcategory }
-    if (Object.keys(obj).length == 0) { return res.status(400).send({ status: false, msg: "No document is enter in filter" }) }
-    let deletedocument = await blogModel.findOneAndUpdate( obj , { isDeleted: true, deletedAt: Date.now() }, { new: true })
-    res.status(200).send(deletedocument)
-}
-catch (err) {
-    res.status(500).status({ status: false, msg: err.message })
-}
 }
 
 

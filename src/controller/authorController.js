@@ -16,6 +16,11 @@ const createAuthor = async function (req, res) {
         if( Object.keys(data).length == 0 ) {
             return res.status(400).send({ status: false, message: "data is missing in body"})
         }
+        if(!data.fname){return res.status(400).send({status:false,msg:"fname name is required"})}
+        if(!data.lname){return res.status(400).send({status:false,msg:"lname name is required"})}
+        if(!data.title){return res.status(400).send({status:false,msg:"title name is required"})}
+        if(!data.email){return res.status(400).send({status:false,msg:"email name is required"})}
+        if(!data.password){return res.status(400).send({status:false,msg:"password name is required"})}
     
         let email = data.email
         // if (!validateEmail.validate(email)) return res.status(400).send({ status: false, msg: "Enter a valid email" })
