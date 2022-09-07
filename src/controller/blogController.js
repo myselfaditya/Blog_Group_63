@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose")
 const authorModel = require("../model/authorModel")
 const blogModel = require("../model/blogModel")
 
@@ -145,7 +146,8 @@ const deleteBlogByPath = async function (req, res) {
     try {
         let blogId = req.params.blogId
 
-        if (blogId.length != 24) { return res.status(400).send({ status: false, msg: "blogId is not in format" }) }
+        //if (blogId.length != 24) { return res.status(400).send({ status: false, msg: "blogId is not in format" }) }
+        if(!mongoose.isValidObjectId(blogId)){return res.status(400).send({ status: false, msg: "blogId is not in format"})}
 
         let blogVerify = await blogModel.findById(blogId)
         if (!blogVerify) {
@@ -196,7 +198,7 @@ const deleteBlogByQuery = async function (req, res) {
         console.log(deleted)
         if (deleted.isDeleted) { return res.status(404).send({ status: false, msg: "Document already deleted" }) }
         if (Object.keys(obj).length == 0) { return res.status(400).send({ status: false, msg: "No document is enter in filter" }) }
-        let deletedocument = await blogModel.findOneAndUpdate(obj, { isDeleted: true, deletedAt: Date.now() }, { new: true })
+        let deletedocument = await blogModel.updateMany(obj, { isDeleted: true, deletedAt: Date.now() }, { new: true })
         res.status(200).send(deletedocument)
     }
     catch (err) {

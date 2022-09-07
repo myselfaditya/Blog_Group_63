@@ -37,9 +37,9 @@ const authorization=async function(req,res,next){
         // 
         if(req.params.blogId){
         let blogId=req.params.blogId
-        let authorId=await blogModel.findById(blogId)
-        console.log(authorId.authorId)
-        if(authorId !==req.authorId){
+        let authordetails=await blogModel.findById(blogId)
+        console.log(authordetails.authorId._id.toString())
+        if(authordetails.authorId._id.toString() !==req.authorId){
             return res.status(403).send({status:false,msg:"You are not authorized"})
         }
         }
@@ -56,6 +56,7 @@ const authorization=async function(req,res,next){
     }
 }
 
-module.exports.authentication = authentication
-module.exports.authorization=authorization
+// module.exports.authentication = authentication
+// module.exports.authorization=authorization
 
+module.exports={authentication,authorization}
