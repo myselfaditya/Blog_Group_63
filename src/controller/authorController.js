@@ -11,7 +11,7 @@ const jwt = require("jsonwebtoken")
   `Endpoint: BASE_URL/authors`
 */
 
-const validName=function(name){
+const validName = function (name) {
     return /^[a-zA-Z]{2,10}$/.test(name)
 }
 
@@ -31,8 +31,8 @@ const createAuthor = async function (req, res) {
         if (!data.password) { return res.status(400).send({ status: false, msg: "password name is required" }) }
         //"/^[a-zA-Z\s]{0,255}$/"
 
-        if(!validName(data.fname)){return res.status(400).send({ status: false, msg: "fname is not in format" })}
-        if(!validName(data.lname)){return res.status(400).send({ status: false, msg: "lname is not in format" })}
+        if (!validName(data.fname)) { return res.status(400).send({ status: false, msg: "fname is not in format" }) }
+        if (!validName(data.lname)) { return res.status(400).send({ status: false, msg: "lname is not in format" }) }
 
         let email = data.email
         // if (!validateEmail.validate(email)) return res.status(400).send({ status: false, msg: "Enter a valid email" })
@@ -51,7 +51,7 @@ const createAuthor = async function (req, res) {
             return res.status(400).send({ status: false, msg: "Password must contain 8 to 15 characters and at least one number, one letter and one unique character such as !#$%&? " })
         }
 
-        
+
         let authorCreated = await authorModel.create(data)
         res.status(201).send({ status: true, data: authorCreated })
     }
@@ -83,7 +83,7 @@ const login = async function (req, res) {
         }
         let author = await authorModel.findOne({ email: email, password: password });
         if (!author)
-            return res.status(404).send({
+            return res.status(401).send({
                 status: false,
                 msg: "email or the password is not corerct",
             });

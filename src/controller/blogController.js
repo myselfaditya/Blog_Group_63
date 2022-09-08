@@ -12,7 +12,7 @@ const blogModel = require("../model/blogModel")
 */
 
 const validdetails=function(details){
-    return /^[a-zA-Z\s]{0,255}$/.test(details)
+    return /^[a-zA-Z,'.\s]{0,150}$/.test(details)
 }
 const createBlog = async function (req, res) {
     try {
@@ -30,7 +30,19 @@ const createBlog = async function (req, res) {
                 }
             }
         }
-        if(!validdetails(data.title) && !validdetails(data.body) && !validdetails(data.category) || !validdetails(data.subcategory) || !validdetails(data.tags) ){return res.status(400).send({status:false,msg:"values should be in string "})}
+        if(data.isPublished){if(typeof(data.isPublished)!== 'boolean'){
+            return res.status(400).send({status:false , msg : "isPublished should be in Boolean"})
+        }}
+        // if(data.isDeleted){if(typeof(data.isDeleted)!== 'boolean'){
+        //     return res.status(400).send({status:false , msg : "isPublished should be in Boolean"})
+        // }}
+        
+        
+        if(!validdetails(data.title) ){return res.status(400).send({status:false,msg:"title should be in string "})}
+        if(!validdetails(data.body) ){return res.status(400).send({status:false,msg:"body should be in string "})}
+        if(!validdetails(data.category) ){return res.status(400).send({status:false,msg:"category should be in string "})}
+        if(!validdetails(data.tags.toString()) ){return res.status(400).send({status:false,msg:"tags should be in string "})}
+        if(!validdetails(data.subcategory.toString()) ){return res.status(400).send({status:false,msg:"subcategory should be in string "})}
         let record = await blogModel.create(data)
         res.status(201).send({ status: true, data: record })
     }
@@ -64,7 +76,7 @@ const getBlog = async function (req, res) {
             if(!mongoose.isValidObjectId(authorId)){return res.status(400).send({ status: false, msg: "authorId is not in format"})}
             else {
                 if (!await authorModel.findById(authorId)) {
-                    return res.status(400).send({ status: false, msg: "Author id is not valid" })
+                    return res.status(400).send({ status: false, msg: "Author is with this id not in database" })
                 }
             }
         }
@@ -136,7 +148,7 @@ const updateBlog = async function (req, res) {
         return res.status(200).send({ status: true, data: updatedBlog })
     }
     catch (err) {
-        console.log(err.message)
+        console.log(err.message , "hi")
         res.status(500).send({ status: false, msg: err.message })
     }
 };
