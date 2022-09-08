@@ -11,6 +11,14 @@ const jwt = require("jsonwebtoken")
   `Endpoint: BASE_URL/authors`
 */
 
+function validName(name) {
+    let regexForValidName = /^[a-zA-Z\s]{2,15}$/
+    if (!regexForValidName.test(name)) {
+         return res.status(400).send({ status: false, msg: "fname is not in format" }) 
+        }
+    return true
+}
+
 const createAuthor = async function (req, res) {
     try {
         let data = req.body
@@ -26,11 +34,13 @@ const createAuthor = async function (req, res) {
         if (!data.email) { return res.status(400).send({ status: false, msg: "email name is required" }) }
         if (!data.password) { return res.status(400).send({ status: false, msg: "password name is required" }) }
         //"/^[a-zA-Z\s]{0,255}$/"
-        validfname=/^[a-zA-Z\s]{2,15}$/
-        if(!validfname.test(data.fname)){return res.status(400).send({status:false,msg:"fname is not in format"})}
+
+        validName(data.fname)
+        validName(data.lname)
+
         let email = data.email
         // if (!validateEmail.validate(email)) return res.status(400).send({ status: false, msg: "Enter a valid email" })
-        if(data.title !="Mr" && data.title !="Mrs" && data.title !="Miss"){return res.status(400).send({status:false,msg:"Use valid "})}
+        if (data.title != "Mr" && data.title != "Mrs" && data.title != "Miss") { return res.status(400).send({ status: false, msg: "Use valid " }) }
         let validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
         if (!validEmail.test(email)) {
             return res.status(400).send({ status: false, msg: "please enter email in  correct format  e.g  xyz@abc.com" })
@@ -40,7 +50,7 @@ const createAuthor = async function (req, res) {
         if (!validPassword.test(password)) {
             return res.status(400).send({ status: false, msg: "Password must contain 8 characters and at least one number, one letter and one unique character such as !#$%&? " })
         }
-        if(await authorModel.findOne({email:data.email})){return res.status(400).send({status:false,msg:"Email already exits"})}
+        if (await authorModel.findOne({ email: data.email })) { return res.status(400).send({ status: false, msg: "Email already exits" }) }
         let authorCreated = await authorModel.create(data)
         console.log(authorCreated)
         res.status(201).send({ status: true, data: authorCreated })
