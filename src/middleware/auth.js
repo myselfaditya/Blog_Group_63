@@ -1,6 +1,7 @@
 
 const jwt = require("jsonwebtoken");
 const blogModel = require("../model/blogModel");
+const mongoose=require('mongoose')
 
 // /### Authentication
 // - Add an authorisation implementation for the JWT token that validates the token before every protected endpoint is called. If the validation fails, return a suitable error message with a corresponding HTTP status code
@@ -36,15 +37,17 @@ const authentication = async function (req, res, next) {
 
 const authorization = async function (req, res, next) {
     try {
-
-        console.log(req.query)
         if (req.params.blogId) {
             let blogId = req.params.blogId
+            if(!mongoose.isValidObjectId(blogId)){return res.status(400).send({ status: false, msg: "blogId is not in format"})}
             let authordetails = await blogModel.findById(blogId)
-            console.log(authordetails.authorId._id.toString())
+            if(!authordetails){
+                return res.status(400).send({ status: false, msg: "blogId is invalid"})
+            }
             if (authordetails.authorId._id.toString() !== req.authorId) {
                 return res.status(403).send({ status: false, msg: "You are not authorized" })
             }
+            next()
         }
         else {
 
@@ -68,7 +71,6 @@ const authorization = async function (req, res, next) {
                 return res.status(403).send({ Status: false, msg: "You are not authorized" })
             }
         }
-        next()
     }
     catch (err) {
         res.status(500).send({ status: false, msg: err.message })
