@@ -174,7 +174,7 @@ const deleteBlogByPath = async function (req, res) {
 
 const deleteBlogByQuery = async function (req, res) {
     try {
-
+        
         let authorId = req.query.authorId
         if (authorId) {
             if (!mongoose.isValidObjectId(authorId)) { return res.status(400).send({ status: false, msg: "authorId is not in format" }) }
@@ -187,13 +187,15 @@ const deleteBlogByQuery = async function (req, res) {
         let category = req.query.category
         let tag = req.query.tag
         let subcategory = req.query.subcategory
-        let isPublished = req.query.isPublished
+        let isPublished = req.query.isPublished //unPublished => isPublished = false
 
         let obj = {}
         if (category) { obj.category = category }
         if (authorId) { obj.authorId = authorId }
         if (tag) { obj.tag = tag }
         if (subcategory) { obj.subcategory = subcategory }
+        if(!isPublished){ obj.isPublished = isPublished }
+
         let deleted = await blogModel.findOne(obj ).select({ isDeleted: 1, _id: 0 })
         if (deleted.isDeleted) { return res.status(404).send({ status: false, msg: "Document already deleted" }) }
         if (Object.keys(obj).length == 0) { return res.status(400).send({ status: false, msg: "No document is enter in filter" }) }

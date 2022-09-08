@@ -2,7 +2,6 @@
 https://github.com/myselfaditya/Blog_Group_63.git
 
 
-
 # Plutonium
 
 Repository for backend cohort - Plutonium
@@ -146,25 +145,3 @@ Refer below sample
 
 #### Note: Create a group database and use the same database in connection string by replacing `groupXDatabase
 
-
-what if we do not give path param in our rout
-
-william:  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JJZCI6IjYzMTVmODdmYzljNjg3ZGNkYWE2ZGM0NSIsImJhdGNoIjoicGx1dG9uaXVtIiwib3JnYW5pc2F0aW9uIjoiRnVuY3Rpb25VcCIsImlhdCI6MTY2MjU0OTk0MX0.cjrb6Qjy_ri8SLhAqD9SYPMMWG9Yd5vnYRVbOhFwUPo
-
-
-validate first name,lname,password
-authorization for last api
-delete by query
-
-
-^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&? "]).*$
-
----
-
-^.*              : Start
-(?=.{8,})        : Length
-(?=.*[a-zA-Z])   : Letters
-(?=.*\d)         : Digits
-(?=.*[!#$%&? "]) : Special characters
-.*$              : End
-"Password must contain 8 characters and at least one number, one letter and one unique character such as !#$%&? "
