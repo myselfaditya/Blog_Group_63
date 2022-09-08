@@ -58,16 +58,14 @@ const authorization = async function (req, res, next) {
                 req.query.isPublished = false
             }
             let findauthorid = await blogModel.find(req.query).select({ authorId: 1, _id: 0 })
-            console.log(findauthorid)
             if(findauthorid.length>0){
                 for(let i = 0; i<findauthorid.length ; i++){
-                    if(findauthorid[i].authorId._id.toString() ==req.authorId){
+                    if(findauthorid[i].authorId._id.toString() == req.authorId){
                         return next()
                     }
                 }
             }
-            console.log(findauthorid)
-            if (findauthorid.authorId._id.toString() !== req.authorId) {
+            else if (findauthorid.authorId._id.toString() !== req.authorId) {
                 return res.status(403).send({ Status: false, msg: "You are not authorized" })
             }
         }
