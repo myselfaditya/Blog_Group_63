@@ -50,9 +50,10 @@ const createAuthor = async function (req, res) {
         if (await authorModel.findOne({ email: data.email })) { return res.status(400).send({ status: false, msg: "Email already exits" }) }
 
         let password = data.password
-        validPassword = /^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&?@ "]).*$/
-        if (!validPassword.test(password)) {
-            return res.status(400).send({ status: false, msg: "Password must contain 8 characters and at least one number, one letter and one unique character such as !#$%&? " })
+        //validPassword = /^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&?@ "]).*$/
+        validPassword1 = /^(?!.* )(?=.*\d)(?=.*[a-zA-Z]).{8,15}(?=.*[!#$%&?@ "]).*$/
+        if (!validPassword1.test(password)) {
+            return res.status(400).send({ status: false, msg: "Password must contain 8 to 15 characters and at least one number, one letter and one unique character such as !#$%&? " })
         }
 
         
