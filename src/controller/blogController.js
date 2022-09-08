@@ -10,6 +10,10 @@ const blogModel = require("../model/blogModel")
 
 - Return HTTP status 400 for an invalid request with a response body like [this](#error-response-structure)
 */
+
+const validdetails=function(details){
+    return /^[a-zA-Z\s]{0,255}$/.test(details)
+}
 const createBlog = async function (req, res) {
     try {
         let data = req.body
@@ -26,6 +30,7 @@ const createBlog = async function (req, res) {
                 }
             }
         }
+        if(!validdetails(data.title) && !validdetails(data.body) && !validdetails(data.category) || !validdetails(data.subcategory) || !validdetails(data.tags) ){return res.status(400).send({status:false,msg:"values should be in string "})}
         let record = await blogModel.create(data)
         res.status(201).send({ status: true, data: record })
     }
