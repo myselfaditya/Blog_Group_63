@@ -58,6 +58,9 @@ const authorization = async function (req, res, next) {
                 req.query.isPublished = false
             }
             let findauthorid = await blogModel.find(req.query).select({ authorId: 1, _id: 0 })
+            if(findauthorid.length==0){
+                return res.status(400).send({status:false,msg:"No document found with given filter"})
+            }
             if(findauthorid.length>0){
                 for(let i = 0; i<findauthorid.length ; i++){
                     if(findauthorid[i].authorId._id.toString() == req.authorId){
