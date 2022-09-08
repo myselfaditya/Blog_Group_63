@@ -26,20 +26,23 @@ const createAuthor = async function (req, res) {
         if (!data.email) { return res.status(400).send({ status: false, msg: "email name is required" }) }
         if (!data.password) { return res.status(400).send({ status: false, msg: "password name is required" }) }
 
-
+        validfname=/^.*(?=.{4,8})(?=.*[a-zA-Z])/
+        if(!validfname.test(data.fname)){return res.status(400).send({status:false,msg:"fname is not in format"})}
         let email = data.email
         // if (!validateEmail.validate(email)) return res.status(400).send({ status: false, msg: "Enter a valid email" })
-
+        if(data.title !="Mr" && data.title !="Mrs" && data.title !="Miss"){return res.status(400).send({status:false,msg:"Use valid "})}
         let validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
         if (!validEmail.test(email)) {
             return res.status(400).send({ status: false, msg: "please enter email in  correct format  e.g  xyz@abc.com" })
         }
         let password = data.password
-        validPassword = /^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&? "]).*$/
+        validPassword = /^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&?@ "]).*$/
         if (!validPassword.test(password)) {
             return res.status(400).send({ status: false, msg: "Password must contain 8 characters and at least one number, one letter and one unique character such as !#$%&? " })
         }
+        if(await authorModel.findOne({email:data.email})){return res.status(400).send({status:false,msg:"Email already exits"})}
         let authorCreated = await authorModel.create(data)
+        console.log(authorCreated)
         res.status(201).send({ status: true, data: authorCreated })
     }
     catch (err) {
