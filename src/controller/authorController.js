@@ -11,12 +11,12 @@ const jwt = require("jsonwebtoken")
   `Endpoint: BASE_URL/authors`
 */
 
-function validName(name) {
-    let regexForValidName = /^[a-zA-Z\s]{2,15}$/
-    if (!regexForValidName.test(name)) {
-         return res.status(400).send({ status: false, msg: "fname is not in format" }) 
-        }
+const validName=function(name){
+    let regexForValidName=/^[a-zA-Z]{2,10}$/
+    if(regexForValidName.test(name)){
     return true
+    }
+    return false
 }
 
 const createAuthor = async function (req, res) {
@@ -35,24 +35,28 @@ const createAuthor = async function (req, res) {
         if (!data.password) { return res.status(400).send({ status: false, msg: "password name is required" }) }
         //"/^[a-zA-Z\s]{0,255}$/"
 
-        validName(data.fname)
-        validName(data.lname)
+        if(!validName(data.fname)){return res.status(400).send({ status: false, msg: "fname is not in format" })}
+        if(!validName(data.lname)){return res.status(400).send({ status: false, msg: "lname is not in format" })}
 
         let email = data.email
         // if (!validateEmail.validate(email)) return res.status(400).send({ status: false, msg: "Enter a valid email" })
+
         if (data.title != "Mr" && data.title != "Mrs" && data.title != "Miss") { return res.status(400).send({ status: false, msg: "Use valid " }) }
+
         let validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
         if (!validEmail.test(email)) {
             return res.status(400).send({ status: false, msg: "please enter email in  correct format  e.g  xyz@abc.com" })
         }
+        if (await authorModel.findOne({ email: data.email })) { return res.status(400).send({ status: false, msg: "Email already exits" }) }
+
         let password = data.password
         validPassword = /^.*(?=.{8,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&?@ "]).*$/
         if (!validPassword.test(password)) {
             return res.status(400).send({ status: false, msg: "Password must contain 8 characters and at least one number, one letter and one unique character such as !#$%&? " })
         }
-        if (await authorModel.findOne({ email: data.email })) { return res.status(400).send({ status: false, msg: "Email already exits" }) }
+
+        
         let authorCreated = await authorModel.create(data)
-        console.log(authorCreated)
         res.status(201).send({ status: true, data: authorCreated })
     }
     catch (err) {

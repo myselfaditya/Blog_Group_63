@@ -15,17 +15,15 @@ const authentication = async function (req, res, next) {
         if (!token){
             return res.status(400).send({ status: false, msg: "token must be present" });
         }
-
-        // if(!jwt.JsonWebTokenError(token)){
-        //     console.log(jwt.JsonWebTokenError(token))
-        //     return res.status(400).send({ status: false, msg: "token is not in format"})
-        // }
-        let decodedToken = jwt.verify(token, "FunctionUp Group No 63")
-        if (!decodedToken) return res.status(400).send({ status: false, message: "invalid token" });
-
-        req.authorId = decodedToken.authorId
-        //Set an attribute in request object 
-        next();
+        jwt.verify(token, "FunctionUp Group No 63",(err,decodedToken)=>{
+            if(err){
+                return res.status(404).send({status:false,message:"token is not valid"})
+            }
+            req.authorId = decodedToken.authorId
+            //Set an attribute in request object 
+            next();
+        })
+       
     }
     catch (err) {
         console.log(err.message)
