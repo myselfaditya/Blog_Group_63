@@ -19,7 +19,7 @@ const createBlog = async function (req, res) {
         if (!data.authorId) { return res.status(400).send({ status: false, msg: "authorId name is required" }) }
         if (!data.category) { return res.status(400).send({ status: false, msg: "category name is required" }) }
         if (authorId) {
-            if (authorId.length != 24) { return res.status(400).send({ status: false, msg: "authorId is not in format" }) }
+            if(!mongoose.isValidObjectId(authorId)){return res.status(400).send({ status: false, msg: "authorId is not in format"})}
             else {
                 if (!await authorModel.findById(authorId)) {
                     return res.status(400).send({ status: false, msg: "Author id is not valid" })
@@ -56,7 +56,7 @@ const getBlog = async function (req, res) {
         let tags = req.query.tags
         let subcategory = req.query.subcategory
         if (authorId) {
-            if (authorId.length != 24) { return res.status(400).send({ status: false, msg: "authorId is not in format" }) }
+            if(!mongoose.isValidObjectId(authorId)){return res.status(400).send({ status: false, msg: "authorId is not in format"})}
             else {
                 if (!await authorModel.findById(authorId)) {
                     return res.status(400).send({ status: false, msg: "Author id is not valid" })
@@ -94,13 +94,13 @@ const getBlog = async function (req, res) {
 const updateBlog = async function (req, res) {
     try {
         let data = req.body
-        let id = req.params.blogId
+        let blogId = req.params.blogId
 
-        if (!id) { return res.status(400).send({ status: false, msg: "blogid is required" }) }
+        if (!blogId) { return res.status(400).send({ status: false, msg: "blogid is required" }) }
 
-        if (id.length != 24) { return res.status(400).send({ status: false, msg: "blogId is not in format" }) }
+        if(!mongoose.isValidObjectId(blogId)){return res.status(400).send({ status: false, msg: "blogId is not in format"})}
 
-        let findBlog = await blogModel.findById(id)
+        let findBlog = await blogModel.findById(blogId)
         if (!findBlog) { return res.status(404).send({ status: false, msg: "Invalid BlogId" }) }
 
         if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, msg: "please enter blog details in body for updating" }) }
@@ -124,7 +124,7 @@ const updateBlog = async function (req, res) {
         obj.publishedAt = new Date(),
             obj.isPublished = true
 
-        let updatedBlog = await blogModel.findOneAndUpdate({ _id: id }, {
+        let updatedBlog = await blogModel.findOneAndUpdate({ _id:blogId }, {
             $set: obj,
             $push: obj2
         }, { new: true, upsert: true })
@@ -146,7 +146,7 @@ const deleteBlogByPath = async function (req, res) {
     try {
         let blogId = req.params.blogId
 
-        //if (blogId.length != 24) { return res.status(400).send({ status: false, msg: "blogId is not in format" }) }
+    
         if(!mongoose.isValidObjectId(blogId)){return res.status(400).send({ status: false, msg: "blogId is not in format"})}
 
         let blogVerify = await blogModel.findById(blogId)
@@ -177,7 +177,7 @@ const deleteBlogByQuery = async function (req, res) {
 
         let authorId = req.query.authorId
         if (authorId) {
-            if (authorId.length != 24) { return res.status(400).send({ status: false, msg: "authorId is not in format" }) }
+            if (!mongoose.isValidObjectId(authorId)) { return res.status(400).send({ status: false, msg: "authorId is not in format" }) }
             else {
                 if (!await authorModel.findById(authorId)) {
                     return res.status(400).send({ status: false, msg: "Author id is not valid" })
@@ -194,11 +194,10 @@ const deleteBlogByQuery = async function (req, res) {
         if (authorId) { obj.authorId = authorId }
         if (tag) { obj.tag = tag }
         if (subcategory) { obj.subcategory = subcategory }
-        let deleted = await blogModel.findOne({ obj }).select({ isDeleted: 1, _id: 0 })
-        console.log(deleted)
+        let deleted = await blogModel.findOne(obj ).select({ isDeleted: 1, _id: 0 })
         if (deleted.isDeleted) { return res.status(404).send({ status: false, msg: "Document already deleted" }) }
         if (Object.keys(obj).length == 0) { return res.status(400).send({ status: false, msg: "No document is enter in filter" }) }
-        let deletedocument = await blogModel.updateMany(obj, { isDeleted: true, deletedAt: Date.now() }, { new: true })
+        let deletedocument = await blogModel.findOneAndUpdate(obj, { isDeleted: true, deletedAt: Date.now() }, { new: true })
         res.status(200).send(deletedocument)
     }
     catch (err) {

@@ -20,7 +20,7 @@ const authentication = async function (req, res, next) {
     if (!decodedToken) return res.status(400).send({ status: false, message: "invalid token" });
 
     req.authorId = decodedToken.authorId
-    console.log(req.authorId)  //Set an attribute in request object 
+      //Set an attribute in request object 
     next();
     }
     catch(err){
@@ -34,7 +34,8 @@ const authentication = async function (req, res, next) {
 const authorization=async function(req,res,next){
     try{
         // let requestauthorIdparam=req.params.authorId
-        // 
+        let requestauthorIdquery=req.query.authorId
+        console.log(req.query)
         if(req.params.blogId){
         let blogId=req.params.blogId
         let authordetails=await blogModel.findById(blogId)
@@ -43,12 +44,13 @@ const authorization=async function(req,res,next){
             return res.status(403).send({status:false,msg:"You are not authorized"})
         }
         }
-        else{
-        let requestauthorIdquery=req.query.authorId
-        if(requestauthorIdquery!==req.authorId){
-            return res.status(403).send({status:false,msg:"You are not authorized"})
-        }
-        }
+         else{
+           let findauthorid=await blogModel.findOne(req.query).select({authorId:1,_id:0})
+           console.log(findauthorid)
+           if(findauthorid.authorId._id.toString() !== req.authorId){
+            return res.status(403).send({Status:false,msg:"You are not authorized"})
+           }
+         }
     next()
     }
     catch(err){
