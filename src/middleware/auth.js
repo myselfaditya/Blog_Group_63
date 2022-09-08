@@ -28,6 +28,7 @@ const authentication = async function (req, res, next) {
         next();
     }
     catch (err) {
+        console.log(err.message)
         res.status(500).send({ status: false, msg: err.message })
     }
 };
@@ -48,7 +49,22 @@ const authorization = async function (req, res, next) {
             }
         }
         else {
-            let findauthorid = await blogModel.findOne(req.query).select({ authorId: 1, _id: 0 })
+
+            if(req.query.isPublished=== 'true'){
+                req.query.isPublished = true
+            }
+            else if(req.query.isPublished=== 'false'){
+                req.query.isPublished = false
+            }
+            let findauthorid = await blogModel.find(req.query).select({ authorId: 1, _id: 0 })
+            console.log(findauthorid)
+            if(findauthorid.length>0){
+                for(let i = 0; i<findauthorid.length ; i++){
+                    if(findauthorid[i].authorId._id.toString() ==req.authorId){
+                        return next()
+                    }
+                }
+            }
             console.log(findauthorid)
             if (findauthorid.authorId._id.toString() !== req.authorId) {
                 return res.status(403).send({ Status: false, msg: "You are not authorized" })
@@ -61,7 +77,6 @@ const authorization = async function (req, res, next) {
     }
 }
 
-// module.exports.authentication = authentication
-// module.exports.authorization=authorization
+
 
 module.exports = { authentication, authorization }
