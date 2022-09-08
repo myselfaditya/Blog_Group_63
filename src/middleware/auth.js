@@ -16,8 +16,8 @@ const authentication = async function (req, res, next) {
             return res.status(400).send({ status: false, msg: "token must be present" });
         }
 
-        if(!mongoose.isValidObjectId(blogId)){return res.status(400).send({ status: false, msg: "blogId is not in format"})}
-        if(jwt.JsonWebTokenError(token)){
+        //if(!mongoose.isValidObjectId(blogId)){return res.status(400).send({ status: false, msg: "blogId is not in format"})}
+        if(!jwt.JsonWebTokenError(token)){
             return res.status(400).send({ status: false, msg: "token is not in format"})
         }
         let decodedToken = jwt.verify(token, "FunctionUp Group No 63")
