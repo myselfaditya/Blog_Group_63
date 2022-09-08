@@ -25,8 +25,8 @@ const createAuthor = async function (req, res) {
         if (!data.title) { return res.status(400).send({ status: false, msg: "title name is required" }) }
         if (!data.email) { return res.status(400).send({ status: false, msg: "email name is required" }) }
         if (!data.password) { return res.status(400).send({ status: false, msg: "password name is required" }) }
-
-        validfname=/^.*(?=.{4,8})(?=.*[a-zA-Z])/
+        //"/^[a-zA-Z\s]{0,255}$/"
+        validfname=/^[a-zA-Z\s]{2,15}$/
         if(!validfname.test(data.fname)){return res.status(400).send({status:false,msg:"fname is not in format"})}
         let email = data.email
         // if (!validateEmail.validate(email)) return res.status(400).send({ status: false, msg: "Enter a valid email" })
@@ -86,7 +86,7 @@ const login = async function (req, res) {
             },
             "FunctionUp Group No 63"
         );
-        res.setHeader("x-auth-token", token);
+        res.setHeader("x-api-key", token);
         res.status(201).send({ status: true, token: token });
     }
     catch (err) {

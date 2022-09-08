@@ -11,7 +11,7 @@ const blogModel = require("../model/blogModel");
 //Authentication
 const authentication = async function (req, res, next) {
     try{
-        let token = req.headers["x-auth-token"]
+        let token = req.headers["x-api-key"]
     //If no token is present in the request header return error. This means the user is not logged in.
     if (!token)
         return res.status(400).send({ status: false, msg: "token must be present" });
