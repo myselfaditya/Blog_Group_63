@@ -18,7 +18,7 @@ const authentication = async function (req, res, next) {
         }
         jwt.verify(token, "FunctionUp Group No 63",(err,decodedToken)=>{
             if(err){
-                return res.status(404).send({status:false,message:"token is not valid"})
+                return res.status(401).send({status:false,message:"token is not valid"})
             }
             req.authorId = decodedToken.authorId
             //Set an attribute in request object 
