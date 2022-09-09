@@ -211,22 +211,28 @@ const deleteBlogByQuery = async function (req, res) {
         if (authorId) { obj.authorId = authorId }
         if (tag) { obj.tag = tag }
         if (subcategory) { obj.subcategory = subcategory }
-        if(req.query.isPublished){
-        if(!isPublished){ obj.isPublished = isPublished }
-        else{
-            obj.isPublished=isPublished
-        }
-        }
+        //if(req.query.isPublished){
+        if(isPublished ===false || isPublished===true){ obj.isPublished = isPublished }
+        // else{
+        //     obj.isPublished=isPublished
+        // }
+        //}
         let deleted = await blogModel.findOne(obj ).select({ isDeleted: 1, _id: 0 })
         if (deleted.isDeleted) { return res.status(404).send({ status: false, msg: "Document already deleted" }) }
         if (Object.keys(obj).length == 0) { return res.status(400).send({ status: false, msg: "No document is enter in filter" }) }
-        let deletedocument = await blogModel.findOneAndUpdate(obj, { isDeleted: true, deletedAt: Date.now() }, { new: true })
+        let deletedocument = await blogModel.updateMany(obj, { isDeleted: true, deletedAt: Date.now() }, { new: true })
         res.status(200).send()
     }
     catch (err) {
         res.status(500).status({ status: false, msg: err.message })
     }
-}
+
+  }
+  
+
+
+
+
 
 
 module.exports.createBlog = createBlog
