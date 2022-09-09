@@ -148,7 +148,7 @@ const updateBlog = async function (req, res) {
         return res.status(200).send({ status: true, data: updatedBlog })
     }
     catch (err) {
-        console.log(err.message , "hi")
+        console.log(err.message)
         res.status(500).send({ status: false, msg: err.message })
     }
 };
@@ -221,7 +221,7 @@ const deleteBlogByQuery = async function (req, res) {
         if (deleted.isDeleted) { return res.status(404).send({ status: false, msg: "Document already deleted" }) }
         if (Object.keys(obj).length == 0) { return res.status(400).send({ status: false, msg: "No document is enter in filter" }) }
         let deletedocument = await blogModel.findOneAndUpdate(obj, { isDeleted: true, deletedAt: Date.now() }, { new: true })
-        res.status(200).send(deletedocument)
+        res.status(200).send()
     }
     catch (err) {
         res.status(500).status({ status: false, msg: err.message })
