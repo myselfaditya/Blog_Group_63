@@ -48,7 +48,7 @@ const authorization = async function (req, res, next) {
                 return res.status(403).send({ status: false, msg: "You are not authorized" })
             }
             next()
-        }
+        }//{}
         else if(Object.keys(req.query).length == 0){
             return res.status(403).send({ Status: false, msg: "You are not authorized provide some details in either in path param or query param" })
         }
