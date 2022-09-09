@@ -53,7 +53,6 @@ const authorization = async function (req, res, next) {
             return res.status(403).send({ Status: false, msg: "You are not authorized provide some details in either in path param or query param" })
         }
         else if(req.query) {
-
             if(req.query.isPublished=== 'true'){
                 req.query.isPublished = true
             }
@@ -64,14 +63,12 @@ const authorization = async function (req, res, next) {
             if(findauthorid.length==0){
                 return res.status(400).send({status:false,msg:"No document found with given filter"})
             }
-            if(findauthorid.length>0){
+            else{
                 for(let i = 0; i<findauthorid.length ; i++){
                     if(findauthorid[i].authorId._id.toString() == req.authorId){
                         return next()
                     }
                 }
-            }
-            else if (findauthorid.authorId._id.toString() !== req.authorId) {
                 return res.status(403).send({ Status: false, msg: "You are not authorized" })
             }
         }
