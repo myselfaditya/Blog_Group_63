@@ -37,7 +37,7 @@ const createAuthor = async function (req, res) {
         let email = data.email
         // if (!validateEmail.validate(email)) return res.status(400).send({ status: false, msg: "Enter a valid email" })
 
-        if (data.title != "Mr" && data.title != "Mrs" && data.title != "Miss") { return res.status(400).send({ status: false, msg: "Use valid " }) }
+        if (data.title != "Mr" && data.title != "Mrs" && data.title != "Miss") { return res.status(400).send({ status: false, msg: "Use proper title e.g Mr or Mrs or Miss " }) }
 
         let validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
         if (!validEmail.test(email)) {
