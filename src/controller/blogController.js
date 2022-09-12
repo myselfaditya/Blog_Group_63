@@ -202,7 +202,7 @@ const deleteBlogByQuery = async function (req, res) {
             }
         }
         let category = req.query.category
-        let tag = req.query.tag
+        let tags = req.query.tags
         let subcategory = req.query.subcategory
         let isPublished = req.query.isPublished //unPublished => isPublished = false
 
