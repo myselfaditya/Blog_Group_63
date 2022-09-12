@@ -33,6 +33,9 @@ const createBlog = async function (req, res) {
         if(data.isPublished){if(typeof(data.isPublished)!== 'boolean'){
             return res.status(400).send({status:false , msg : "isPublished should be in Boolean"})
         }}
+        if(data.isPublished==true){
+            data.publishedAt=Date()
+        }
         // if(data.isDeleted){if(typeof(data.isDeleted)!== 'boolean'){
         //     return res.status(400).send({status:false , msg : "isPublished should be in Boolean"})
         // }}
@@ -136,14 +139,31 @@ const updateBlog = async function (req, res) {
         let category = req.body.category
         let tags = req.body.tags
         let subcategory = req.body.subcategory
+        let isPublished=req.body.isPublished
+        let isDeleted=req.body.isDeleted
 
         if (title) { obj.title = title }
         if (body) { obj.body = body }
         if (category) { obj.category = category }
         if (tags) { obj2.tags = tags }
         if (subcategory) { obj2.subcategory = subcategory }
+        if(isDeleted){
+            obj.isDeleted=true
+            obj.deletedAt=new Date()
+        }
+        else{
+            obj.isDeleted=false
+            obj.deletedAt=null
+        }
+
+        if(isPublished){
         obj.publishedAt = new Date(),
             obj.isPublished = true
+        }
+        else{
+            obj.isPublished=false
+            obj.publishedAt =null
+        }
 
         let updatedBlog = await blogModel.findOneAndUpdate({ _id:blogId }, {
             $set: obj,
