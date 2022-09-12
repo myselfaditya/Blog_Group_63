@@ -209,7 +209,7 @@ const deleteBlogByQuery = async function (req, res) {
         let obj = {}
         if (category) { obj.category = category }
         if (authorId) { obj.authorId = authorId }
-        if (tag) { obj.tag = tag }
+        if (tags) { obj.tags = tags }
         if (subcategory) { obj.subcategory = subcategory }
         //if(req.query.isPublished){
         if(isPublished ===false || isPublished===true){ obj.isPublished = isPublished }
