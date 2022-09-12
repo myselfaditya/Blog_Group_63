@@ -41,8 +41,12 @@ const createBlog = async function (req, res) {
         if(!validdetails(data.title) ){return res.status(400).send({status:false,msg:"title should be in string "})}
         if(!validdetails(data.body) ){return res.status(400).send({status:false,msg:"body should be in string "})}
         if(!validdetails(data.category) ){return res.status(400).send({status:false,msg:"category should be in string "})}
+        if(data.tags){
         if(!validdetails(data.tags.toString()) ){return res.status(400).send({status:false,msg:"tags should be in string "})}
+        }
+        if(data.subcategory){
         if(!validdetails(data.subcategory.toString()) ){return res.status(400).send({status:false,msg:"subcategory should be in string "})}
+        }
         let record = await blogModel.create(data)
         res.status(201).send({ status: true, data: record })
     }
@@ -202,7 +206,7 @@ const deleteBlogByQuery = async function (req, res) {
             }
         }
         let category = req.query.category
-        let tag = req.query.tags
+        let tags = req.query.tags
         let subcategory = req.query.subcategory
         let isPublished = req.query.isPublished //unPublished => isPublished = false
 
