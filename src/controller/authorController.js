@@ -1,43 +1,43 @@
 const authorModel = require("../model/authorModel")
 const jwt = require("jsonwebtoken")
-// const validateEmail = require("email-validator")
 
 
-
-/*
-### Author APIs /authors
-- Create an author - atleast 5 authors
-- Create a author document from request body.
-  `Endpoint: BASE_URL/authors`
-*/
-
-const validName = function (name) {
-    return /^[a-zA-Z]{2,10}$/.test(name)
+const isValidValue = function(value){   //it should not be like undefined or null.
+    if (typeof value === 'undefined' || value === null) return false   //if the value is undefined or null it will return false.
+    if (typeof value === 'string' && value.trim().length === 0) return false   //if the value is string & length is 0 it will return false.
+    return true
 }
+
+
+const isValidTitle = function(title){    
+    return ['Mr', 'Mrs', 'Miss'].indexOf(title) !== -1     //enum validation
+}
+
+const isValidDetails = function(details){   
+    return Object.keys(details).length > 0
+}
+
 
 const createAuthor = async function (req, res) {
     try {
         let data = req.body
-        if (Object.keys(data).length == 0) {
+        if (!isValidDetails(data)) {
             return res.status(400).send({ status: false, message: "data is missing in body" })
         }
-        if (Object.keys(data).length > 5) {
-            return res.status(400).send({ status: false, message: "data is exceeding" })
-        }
-        if (!data.fname) { return res.status(400).send({ status: false, msg: "fname name is required" }) }
-        if (!data.lname) { return res.status(400).send({ status: false, msg: "lname name is required" }) }
-        if (!data.title) { return res.status(400).send({ status: false, msg: "title name is required" }) }
-        if (!data.email) { return res.status(400).send({ status: false, msg: "email name is required" }) }
-        if (!data.password) { return res.status(400).send({ status: false, msg: "password name is required" }) }
-        //"/^[a-zA-Z\s]{0,255}$/"
+        if (!isValidValue(data.fname)) { return res.status(400).send({ status: false, msg: "fname  is required" }) }
+        if (!isValidValue(data.lname)) { return res.status(400).send({ status: false, msg: "lname  is required" }) }
+        if (!isValidValue(data.title)) { return res.status(400).send({ status: false, msg: "title  is required" }) }
+        if (!isValidValue(data.email)) { return res.status(400).send({ status: false, msg: "email  is required" }) }
+        if (!isValidValue(data.password)){ return res.status(400).send({ status: false, msg: "password  is required" }) }
 
-        if (!validName(data.fname)) { return res.status(400).send({ status: false, msg: "fname is not in format" }) }
-        if (!validName(data.lname)) { return res.status(400).send({ status: false, msg: "lname is not in format" }) }
+        let validString = /\d/;
+        if(validString.test(data.fname)){return res.status(400).send({status:false,msg:" Fname can not contain number"})}
+        if(validString.test(data.lname)){return res.status(400).send({status:false,msg:" lname can not contain number"})}
 
         let email = data.email
-        // if (!validateEmail.validate(email)) return res.status(400).send({ status: false, msg: "Enter a valid email" })
 
-        if (data.title != "Mr" && data.title != "Mrs" && data.title != "Miss") { return res.status(400).send({ status: false, msg: "Use proper title e.g Mr or Mrs or Miss " }) }
+
+        if (!isValidTitle(data.title)) { return res.status(400).send({ status: false, msg: "Use proper title e.g Mr or Mrs or Miss " }) }
 
         let validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
         if (!validEmail.test(email)) {
@@ -61,7 +61,7 @@ const createAuthor = async function (req, res) {
     }
 }
 
-module.exports.createAuthor = createAuthor
+
 
 
 const login = async function (req, res) {
@@ -69,14 +69,11 @@ const login = async function (req, res) {
         let email = req.body.email;
         let password = req.body.password;
         let data = req.body
-        if (Object.keys(data).length == 0) {
+        if (isValidDetails(data)) {
             return res.status(400).send({ status: false, message: "data is missing in body" })
         }
-        if (Object.keys(data).length > 2) {
-            return res.status(400).send({ status: false, message: "data is exceeding" })
-        }
-        if (!email) { return res.status(400).send({ status: false, msg: "email is required" }) }
-        if (!password) { return res.status(400).send({ status: false, msg: "password is required" }) }
+        if (!isValidValue(email)) { return res.status(400).send({ status: false, msg: "email is required" }) }
+        if (!isValidValue(password)) { return res.status(400).send({ status: false, msg: "password is required" }) }
         let validEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
         if (!validEmail.test(email)) {
             return res.status(400).send({ status: false, message: "please enter email in  correct format" })
@@ -105,5 +102,5 @@ const login = async function (req, res) {
     }
 }
 
-
+module.exports.createAuthor = createAuthor
 module.exports.login = login

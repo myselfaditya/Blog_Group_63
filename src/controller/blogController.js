@@ -2,14 +2,8 @@ const { default: mongoose } = require("mongoose")
 const authorModel = require("../model/authorModel")
 const blogModel = require("../model/blogModel")
 
-/*### POST /blogs
-- Create a blog document from request body. Get authorId in request body only.
-- Make sure the authorId is a valid authorId by checking the author exist in the authors collection.
-- Return HTTP status 201 on a succesful blog creation. Also return the blog document. The response should be a JSON object like [this](#successful-response-structure) 
-- Create atleast 5 blogs for each author
 
-- Return HTTP status 400 for an invalid request with a response body like [this](#error-response-structure)
-*/
+
 
 const validdetails=function(details){
     return /^[a-zA-Z,'.\s]{0,150}$/.test(details)
@@ -36,9 +30,6 @@ const createBlog = async function (req, res) {
         if(data.isPublished==true){
             data.publishedAt=Date()
         }
-        // if(data.isDeleted){if(typeof(data.isDeleted)!== 'boolean'){
-        //     return res.status(400).send({status:false , msg : "isPublished should be in Boolean"})
-        // }}
         
         
         if(!validdetails(data.title) ){return res.status(400).send({status:false,msg:"title should be in string "})}
@@ -58,18 +49,7 @@ const createBlog = async function (req, res) {
     }
 }
 
-/*
-### GET /blogs
-- Returns all blogs in the collection that aren't deleted and are published
-- Return the HTTP status 200 if any documents are found. The response structure should be like [this](#successful-response-structure) 
-- If no documents are found then return an HTTP status 404 with a response like [this](#error-response-structure) 
-- Filter blogs list by applying filters. Query param can have any combination of below filters.
-  - By author Id
-  - By category
-  - List of blogs that have a specific tag
-  - List of blogs that have a specific subcategory
-example of a query url: blogs?filtername=filtervalue&f2=fv2
-*/
+
 
 const getBlog = async function (req, res) {
     try {
@@ -87,11 +67,10 @@ const getBlog = async function (req, res) {
                 }
             }
         }
-        // //Filter blogs list by applying filters
-        if (authorId) { obj.authorId = authorId }//
+        if (authorId) { obj.authorId = authorId }
         if (category) { obj.category = category }
         if (tags) { obj.tags = tags }
-        if (subcategory) { obj.subcategory = subcategory }//
+        if (subcategory) { obj.subcategory = subcategory }
 
         let saveData = await blogModel.find(obj)
         if (saveData.length == 0) {
@@ -107,12 +86,7 @@ const getBlog = async function (req, res) {
 
 
 
-// ### PUT /blogs/:blogId
-// - Updates a blog by changing the its title, body, adding tags, adding a subcategory. (Assuming tag and subcategory received in body is need to be added)
-// - Updates a blog by changing its publish status i.e. adds publishedAt date and set published to true
-// - Check if the blogId exists (must have isDeleted false). If it doesn't, return an HTTP status 404 with a response body like [this](#error-response-structure)
-// - Return an HTTP status 200 if updated successfully with a body like [this](#successful-response-structure) 
-// - Also make sure in the response you return the updated blog document. 
+
 
 
 const updateBlog = async function (req, res) {
@@ -178,9 +152,7 @@ const updateBlog = async function (req, res) {
 };
 
 
-// ### DELETE /blogs/:blogId
-// - Check if the blogId exists( and is not deleted). If it does, mark it deleted and return an HTTP status 200 without any response body.
-// - If the blog document doesn't exist then return an HTTP status of 404 with a body like [this](#error-response-structure) 
+
 
 
 const deleteBlogByPath = async function (req, res) {
@@ -208,9 +180,7 @@ const deleteBlogByPath = async function (req, res) {
 }
 
 
-// ### DELETE /blogs?queryParams
-// - Delete blog documents by category, authorid, tag name, subcategory name, unpublished
-// - If the blog document doesn't exist then return an HTTP status of 404 with a body like [this](#error-response-structure)
+
 
 
 const deleteBlogByQuery = async function (req, res) {
@@ -228,19 +198,14 @@ const deleteBlogByQuery = async function (req, res) {
         let category = req.query.category
         let tags = req.query.tags
         let subcategory = req.query.subcategory
-        let isPublished = req.query.isPublished //unPublished => isPublished = false
+        let isPublished = req.query.isPublished 
 
         let obj = {}
         if (category) { obj.category = category }
         if (authorId) { obj.authorId = authorId }
         if (tags) { obj.tags = tags }
         if (subcategory) { obj.subcategory = subcategory }
-        //if(req.query.isPublished){
         if(isPublished ===false || isPublished===true){ obj.isPublished = isPublished }
-        // else{
-        //     obj.isPublished=isPublished
-        // }
-        //}
         let deleted = await blogModel.findOne(obj ).select({ isDeleted: 1, _id: 0 })
         if (deleted.isDeleted) { return res.status(404).send({ status: false, msg: "Document already deleted" }) }
         if (Object.keys(obj).length == 0) { return res.status(400).send({ status: false, msg: "No document is enter in filter" }) }

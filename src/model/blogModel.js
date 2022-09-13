@@ -15,13 +15,19 @@ const blogScehma = new mongoose.Schema({
         ref: "Author",
         required: true
     },
-    tags: ["String"],
+    tags: {
+        type:["String"],
+        default:undefined
+    },
 
     category: {
         type: String,
         required: true
     },
-    subcategory: ["String"],
+    subcategory: {
+        type:["String"],
+        default:undefined
+    },
 
     deletedAt:{ type:Date,
         default:null
