@@ -69,7 +69,7 @@ const login = async function (req, res) {
         let email = req.body.email;
         let password = req.body.password;
         let data = req.body
-        if (isValidDetails(data)) {
+        if (!isValidDetails(data)) {
             return res.status(400).send({ status: false, message: "data is missing in body" })
         }
         if (!isValidValue(email)) { return res.status(400).send({ status: false, msg: "email is required" }) }
